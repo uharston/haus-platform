@@ -39,7 +39,7 @@ export default defineConfig({
 		mdx(),
 		icon(),
 		sanity({
-			projectId: "xgztagdf",
+			projectId: "fyddufgp",
 			dataset: "production",
 			useCdn: false, // for static builds
 		}),
