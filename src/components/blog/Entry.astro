@@ -16,7 +16,7 @@ const { title, url, author, pubDate, description, image, titleInside = false } =
 				"article-overlay relative block w-full overflow-hidden lg:col-span-2",
 				titleInside ? "article-gradient-overlay-bottom" : "article-gradient-overlay",
 			]}>
-			<Image class="relative aspect-[384/246] h-full w-full bg-center object-cover" src={image} alt={title} />
+			<Image class="relative aspect-[384/246] h-full w-full bg-center object-cover" src={image} alt={title} inferSize={true} />
 		</div>
 		<div
 			class={`flex w-full flex-1 flex-col items-start justify-between  ${

@@ -14,22 +14,33 @@ const translatePath = useTranslatedPath(lang);
 
 type Props = {
 	frontmatter: any;
-	body: string;
+	content?: any[];
 	seo?: AstroSeoProps;
 };
 
-const { frontmatter, body, seo } = Astro.props;
+const { frontmatter, content, seo } = Astro.props;
 
-function getArticleReadingTime(body: string): number {
-	if (!body) return 0;
+function getArticleReadingTime(blocks: any[]): number {
+	if (!blocks) return 0;
 	const wordsPerMinute = 183;
-	const numberOfWords = body.split(/\s/g).length;
-	const minutes = numberOfWords / wordsPerMinute;
+	let wordCount = 0;
+	
+	blocks.forEach((block) => {
+		if (block._type === 'block' && block.children) {
+			block.children.forEach((child: any) => {
+				if (child.text) {
+					wordCount += child.text.split(/\s/g).length;
+				}
+			});
+		}
+	});
+	
+	const minutes = wordCount / wordsPerMinute;
 	const readTime = Math.ceil(minutes);
 	return readTime;
 }
 
-const readingTime = getArticleReadingTime(body);
+const readingTime = getArticleReadingTime(content || []);
 ---
 
 <BaseLayout seo={seo}>
@@ -56,7 +67,7 @@ const readingTime = getArticleReadingTime(body);
 				}
 			</div>
 			<div class="mt-12 w-full justify-center">
-				<Image class="mt-12 w-full rounded-lg object-cover" src={frontmatter.image.source} alt={frontmatter.image.alt} />
+				<Image class="mt-12 w-full rounded-lg object-cover" src={frontmatter.image.source} alt={frontmatter.image.alt} inferSize={true} />
 				<div class="flex justify-between px-2 pt-4 font-mono text-sm">
 					<div class="flex flex-wrap gap-1">
 						{frontmatter?.tags?.length > 0 && <span class="py-3">TAGS:</span>}
@@ -73,7 +84,25 @@ const readingTime = getArticleReadingTime(body);
 					<span class="py-3">~{readingTime} MIN</span>
 				</div>
 
-				<div class="prose-styles mt-12"><slot /></div>
+				<div class="prose-styles mt-12">
+					{content && content.length > 0 ? (
+						<div>
+							{content.map((block: any) => (
+								<div>
+									{block._type === 'block' && (
+										<p>
+											{block.children?.map((child: any, idx: number) => (
+												<span key={idx}>{child.text}</span>
+											))}
+										</p>
+									)}
+								</div>
+							))}
+						</div>
+					) : (
+						<p>{frontmatter.description}</p>
+					)}
+				</div>
 			</div>
 			<Comments />
 		</div>
