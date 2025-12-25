@@ -1,6 +1,7 @@
 {
 	"extends": "astro/tsconfigs/strict",
 	"compilerOptions": {
+		"types": ["@sanity/astro/module"],
 		"strictNullChecks": true,
 		"baseUrl": "src",
 		"paths": {
