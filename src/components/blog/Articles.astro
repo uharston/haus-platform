@@ -3,23 +3,13 @@ import { sanityClient } from "sanity:client";
 import Entry from "@/components/blog/Entry.astro";
 import Title from "@components/global/Title.astro";
 import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils";
+import { getAllPosts } from "@/sanity/queries/posts";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const translatePath = useTranslatedPath(lang);
 
-// Fetch all posts from Sanity and sort by publish date
-const allPosts = await sanityClient.fetch(
-    `*[_type == "post"] | order(pubDate desc) {
-        ...,
-        "image": {
-            "source": image.source.asset->url,
-            "alt": image.alt
-        }
-    }`,
-    {},
-    { cache: "no-store" }
-);
+const allPosts = await getAllPosts(sanityClient)
 ---
 
 <section>

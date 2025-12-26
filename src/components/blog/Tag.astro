@@ -1,12 +1,18 @@
 ---
-import { type CollectionEntry } from "astro:content";
-
 import EntriesOne from "@/components/blog/Entry.astro";
 import Title from "@components/global/Title.astro";
 
 interface Props {
 	tag: string;
-	posts: CollectionEntry<"posts">;
+	posts: Array<{
+		_id: string;
+		title: string;
+		description: string;
+		pubDate: string;
+		author: { name: string; link?: string };
+		image?: { source: string; alt: string };
+		tags: string[];
+	}>;
 }
 
 const { tag, posts } = Astro.props as Props;
@@ -21,13 +27,13 @@ const { tag, posts } = Astro.props as Props;
 			{
 				posts.map((post) => (
 					<EntriesOne
-						url={"/blog/" + post.slug}
-						title={post.data.title}
-						description={post.data.description}
-						alt={post.data.title}
-						pubDate={post.data.pubDate.toString().slice(0, 10)}
-						author={post.data.author}
-						image={post.data.image.source}
+						url={"/blog/" + post._id}
+						title={post.title}
+						description={post.description}
+						alt={post.image?.alt || post.title}
+						pubDate={new Date(post.pubDate).toISOString().slice(0, 10)}
+						author={post.author}
+						image={post.image?.source}
 					/>
 				))
 			}

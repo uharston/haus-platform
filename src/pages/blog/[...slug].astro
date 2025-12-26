@@ -2,19 +2,10 @@
 import { sanityClient } from "sanity:client";
 import type { AstroSeoProps } from "@astrolib/seo";
 import MarkdownPostLayout from "../../layouts/MarkdownPostLayout.astro";
+import { getAllPosts } from "@/sanity/queries/posts";
 
 export async function getStaticPaths() {
-	const blogEntries = await sanityClient.fetch(
-		`*[_type == "post"] {
-			...,
-			"image": {
-				"source": image.source.asset->url,
-				"alt": image.alt
-			}
-		}`,
-		{},
-		{ cache: "no-store" }
-	);
+	const blogEntries = await getAllPosts(sanityClient)
 
 	return blogEntries.map((entry) => {
 		return { params: { slug: entry._id }, props: entry };

@@ -3,19 +3,10 @@ import { sanityClient } from "sanity:client";
 import type { AstroSeoProps } from "@astrolib/seo";
 import Tag from "@components/blog/Tag.astro";
 import BaseLayout from "@layouts/BaseLayout.astro";
+import { getAllPosts } from "@/sanity/queries/posts";
 
 export async function getStaticPaths() {
-	const allPosts = await sanityClient.fetch(
-		`*[_type == "post"] | order(pubDate desc) {
-			...,
-			"image": {
-				"source": image.source.asset->url,
-				"alt": image.alt
-			}
-		}`,
-		{},
-		{ cache: "no-store" }
-	);
+	const allPosts = await getAllPosts(sanityClient)
 
 	const uniqueTags = [...new Set(allPosts.flatMap((post) => post.tags))];
 	return uniqueTags.map((tag) => {
