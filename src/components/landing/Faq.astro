@@ -1,4 +1,6 @@
 ---
+import { sanityClient } from "sanity:client";
+import { getFaqs } from "@/sanity/queries/faq";
 import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils";
 
 const { class: className } = Astro.props;
@@ -7,48 +9,51 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const translatePath = useTranslatedPath(lang);
 
-const faqs = [
-	{
-		question: t("faqs.question1"),
-		answer: t("faqs.answer1"),
-	},
-	{
-		question: t("faqs.question2"),
-		answer: t("faqs.answer2"),
-	},
-	{
-		question: t("faqs.question3"),
-		answer: t("faqs.answer3"),
-	},
-	{
-		question: t("faqs.question4"),
-		answer: t("faqs.answer4"),
-	},
-	{
-		question: t("faqs.question5"),
-		answer: t("faqs.answer5"),
-	},
-	{
-		question: t("faqs.question6"),
-		answer: t("faqs.answer6"),
-	},
-	{
-		question: t("faqs.question7"),
-		answer: t("faqs.answer7"),
-	},
-	{
-		question: t("faqs.question8"),
-		answer: t("faqs.answer8"),
-	},
-	{
-		question: t("faqs.question9"),
-		answer: t("faqs.answer9"),
-	},
-	{
-		question: t("faqs.question10"),
-		answer: t("faqs.answer10"),
-	},
-];
+const faqs = await getFaqs(sanityClient);
+
+
+// const faqs = [
+// 	{
+// 		question: t("faqs.question1"),
+// 		answer: t("faqs.answer1"),
+// 	},
+// 	{
+// 		question: t("faqs.question2"),
+// 		answer: t("faqs.answer2"),
+// 	},
+// 	{
+// 		question: t("faqs.question3"),
+// 		answer: t("faqs.answer3"),
+// 	},
+// 	{
+// 		question: t("faqs.question4"),
+// 		answer: t("faqs.answer4"),
+// 	},
+// 	{
+// 		question: t("faqs.question5"),
+// 		answer: t("faqs.answer5"),
+// 	},
+// 	{
+// 		question: t("faqs.question6"),
+// 		answer: t("faqs.answer6"),
+// 	},
+// 	{
+// 		question: t("faqs.question7"),
+// 		answer: t("faqs.answer7"),
+// 	},
+// 	{
+// 		question: t("faqs.question8"),
+// 		answer: t("faqs.answer8"),
+// 	},
+// 	{
+// 		question: t("faqs.question9"),
+// 		answer: t("faqs.answer9"),
+// 	},
+// 	{
+// 		question: t("faqs.question10"),
+// 		answer: t("faqs.answer10"),
+// 	},
+// ];
 ---
 
 <section id="faq" class:list={["section faq-section relative bg-zinc-900 text-white", className]}>

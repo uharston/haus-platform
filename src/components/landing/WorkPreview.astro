@@ -1,9 +1,11 @@
 ---
+import { sanityClient } from "sanity:client";
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import yourProjectImage from "@assets/images/projects/yourProject.png";
 import WokCard from "@components/work/WokCard.astro";
 import { getLangFromUrl, useTranslatedPath, useTranslations } from "@i18n/utils";
+import { getAllProjects } from "@/sanity/queries/projects";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -11,20 +13,7 @@ const translatePath = useTranslatedPath(lang);
 
 const { class: className } = Astro.props;
 
-const allProjects = (await getCollection("projects"))
-	.filter((prj) => {
-		const [postLang, ...slug] = prj.slug.split("/");
-		return postLang === lang;
-	})
-	.map((prj) => {
-		const [postLang, slug] = prj.slug.split("/");
-
-		return {
-			...prj,
-			slug: slug,
-		};
-	})
-	.sort((a, b) => Number(b.data.pubDate) - Number(a.data.pubDate));
+const allProjects = await getAllProjects(sanityClient);
 ---
 
 <section id="projects" class:list={["section work-preview-section home-dark-section py-12", className]}>
@@ -34,9 +23,12 @@ const allProjects = (await getCollection("projects"))
 			{
 				allProjects.map((project, index) => (
 					<WokCard
-						image={project.data.image.source}
-						project={project.data.title}
-						link={`/work/${project.slug}`}
+						alt={project.alt}
+						image={project.imageUrl}
+						imageWidth={project.width}
+						imageHeight={project.height}
+						project={project.title}
+						link={`/work/${project.author.link}`}
 						class={
 							index % 2 === 0
 								? `md:col-start-1 md:row-start-${Math.floor(index / 2) * 2 + 1} md:row-span-2`

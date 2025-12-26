@@ -6,6 +6,7 @@ import mobileSvg from "@assets/images/services/mobile-app-ui-ux-design.svg?raw";
 import seoSvg from "@assets/images/services/seo-link-building.svg?raw";
 import websiteSvg from "@assets/images/services/website-ui-ux-development.svg?raw";
 import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils";
+import { sanityClient } from "sanity:client";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -13,33 +14,44 @@ const translatePath = useTranslatedPath(lang);
 
 const { class: className } = Astro.props;
 
-const points = [
-	{
-		title: t("websites.title"),
-		content: t("websites.content"),
-		image: websiteSvg,
-	},
-	{
-		title: t("apps.title"),
-		content: t("apps.content"),
-		image: mobileSvg,
-	},
-	{
-		title: t("uiux.title"),
-		content: t("uiux.content"),
-		image: designSvg,
-	},
-	{
-		title: t("seo.title"),
-		content: t("seo.content"),
-		image: seoSvg,
-	},
-	{
-		title: t("advertising.title"),
-		content: t("advertising.content"),
-		image: advertisingSvg,
-	},
-];
+// const points = [
+// 	{
+// 		title: t("websites.title"),
+// 		content: t("websites.content"),
+// 		image: websiteSvg,
+// 	},
+// 	{
+// 		title: t("apps.title"),
+// 		content: t("apps.content"),
+// 		image: mobileSvg,
+// 	},
+// 	{
+// 		title: t("uiux.title"),
+// 		content: t("uiux.content"),
+// 		image: designSvg,
+// 	},
+// 	{
+// 		title: t("seo.title"),
+// 		content: t("seo.content"),
+// 		image: seoSvg,
+// 	},
+// 	{
+// 		title: t("advertising.title"),
+// 		content: t("advertising.content"),
+// 		image: advertisingSvg,
+// 	},
+// ];
+
+const points = await sanityClient.fetch(
+	`*[_type == "service"] | order(title asc) {
+  title,
+  "slug": slug.current,
+  "image": mainImage.asset->url,
+  "alt": mainImage.alt,
+  // This takes the first block of text and crops it for a "card" description
+  "content": array::join(content[0].children[].text, "")
+}`,
+);
 ---
 
 <section id="services" class:list={["section home-dark-section services-section relative", className]}>
